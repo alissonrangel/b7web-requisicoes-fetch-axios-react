@@ -14,7 +14,7 @@
 - BASE = https://api.meusite.com
 - ENDPOINT = BASE + COMANDO ESPECIFICO
 
-#### API da atividade feita
+#### API modelo para o recurso carro
 - POST https://api.meusite.com/carros
 - GET https://api.meusite.com/carros
 - GET https://api.meusite.com/carros?search=fer
@@ -34,10 +34,13 @@
 - para permitir precisa adicionar um token no body da requisição ou adicionar o token no Authorization do headers
 
 - posso passar o token no cabeçalho
+```
 body: {
   token: 'daldnad'
 }
+```
 - posso passer o token no atributo 'Authorization' do headers 
+```
 let result = await fetch(url,{
   method: 'POST',
   body: JSON.stringify(body),
@@ -46,7 +49,7 @@ let result = await fetch(url,{
     'Authorization': 'Bearer ' + token
   }
 });
-
+```
 
 #### Salvando token e userName no localStorage, para guardar os dados.
 
@@ -55,6 +58,7 @@ let result = await fetch(url,{
 - faz um form com os campos que serão enviados
 - faz um useState para cada campo
 - mas para o campo de upload de img usa o useRef e não o useState
+```
 let body = new FormData();
 body.append('brand', carBrand);
 body.append('name', carName);
@@ -70,3 +74,4 @@ let result = await fetch('https://api.b7web.com.br/carros/api/carro', {
   },
   body
 });
+```
