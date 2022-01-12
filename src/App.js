@@ -46,20 +46,32 @@ function App() {
     setCarros([]);
     setLoading(true);
     const ano = document.getElementById('ano').value;
-    let url = 'https://api.b7web.com.br/carros/api/carros';
-    if ( ano !== ''){
-      url += `?ano=${ano}`;
+
+    // Requisicao com arquivo separado
+    let { data: {cars, error} } = await api.getCarList(ano);
+
+    // Requisicao com axios
+    //let { data: {cars, error} } = await api.api.get(`/carros?ano=${ano}`);    
+    if ( error !== ''){     
+      alert(error);
+      return;
     }
-    
-    const cars = await fetch(url)
-                  .then( response => response.json() )
-                  .then( data => {
-                    if ( data.error === ''){
-                      return data.cars
-                    } else {
-                      alert(data.error);
-                    }
-                  })
+
+    // Requisicao com fetch
+    // let url = 'https://api.b7web.com.br/carros/api/carros';
+    // if ( ano !== ''){
+    //   url += `?ano=${ano}`;
+    // }
+    // const cars = await fetch(url)
+    //               .then( response => response.json() )
+    //               .then( data => {
+    //                 if ( data.error === ''){
+    //                   return data.cars
+    //                 } else {
+    //                   alert(data.error);
+    //                 }
+    //               })
+
     console.log(cars);    
     setCarros(cars);
     setLoading(false);              
@@ -75,50 +87,85 @@ function App() {
     e.preventDefault(); //pra não faxer o envio do formulário
     let url = '';
     let body = {};
-
+    let json = {};
     if (cadastro) {
-      url = 'https://api.b7web.com.br/carros/api/auth/login';
+
+      // Requisicao com arquivo separado    
       body = {
         email: email,
         password: senha
       }
+
+      // Requisicao com arquivo separado
+      let result = await api.login(body);
+
+      // Com fetch
+      // url = 'https://api.b7web.com.br/carros/api/auth/login';
+      
+      console.log(-1);
+      
+      // Com axios
+      // let result = await api.post('/auth/login',body)
+      //console.log(0);
+      json = result.data;
+      //console.log('jsonnn ', json );
+      
     } else {
-      url = 'https://api.b7web.com.br/carros/api/auth/register';
+
       body = {
         name: nome,
         email: email,
         password: senha
       }
+
+      // Requisicao com arquivo separado
+      let result = await api.register(body);
+
+      // Com fetch
+      // url = 'https://api.b7web.com.br/carros/api/auth/register';      
+
+      // Com axios
+      //let result = await api.post('/auth/register',body)
+
+      json = result.data;
     }
 
-    console.log('body', body);
+    // Com fetch
+    // console.log('body', body);
+    // let result = await fetch(url,{
+    //   method: 'POST',
+    //   body: JSON.stringify(body),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // });
+    // json = await result.json();
+    console.log(1);
     
-
-    let result = await fetch(url,{
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    let json = await result.json();
-
     if ( json.error === ''){
+      console.log(2);
+      
       if(cadastro){
+        console.log(3);
+        
         localStorage.setItem('token', json.token);
         localStorage.setItem('username', json.user.name);
         setToken(json.token);
         setUserName(json.user.name);
       }else{
+        console.log(4);
+        
         localStorage.setItem('token', json.token);
         localStorage.setItem('username', json.user.name);
         setToken(json.token);
         setUserName(json.user.name);
       }
     } else {
-      alert(json.error);
+      console.log(5);
+            
+      console.log('Error: ', json.error);
     }
-    console.log('RESULT', json);
+    // console.log('RESULT', json);
   }
 
   const handleCadastro = (e) => {
@@ -149,18 +196,26 @@ function App() {
       body.append('photo', carImgField.current.files[0]);
     }
 
-    let result = await fetch('https://api.b7web.com.br/carros/api/carro', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body
-    });
+    // Requisicao com arquivo separado
+    let json = await api.addNewCar(body, token);
+    
+    //com axios
+    //api.defaults.headers.Authorization = `Bearer ${token}`
+    //let { data: json} = await api.post('/carro', body);
 
-    const json = await result.json()
+    // com fetch
+    // let result = await fetch('https://api.b7web.com.br/carros/api/carro', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Authorization': `Bearer ${token}`
+    //   },
+    //   body
+    // });
+
+    // let json = await result.json()
 
     if (json.error){
-      console.log(json.error);
+      console.log('Errorrr: ',json.error);
     } else {
       alert('Carro adicionado com sucesso!!!');
       console.log('RESULT', json);      

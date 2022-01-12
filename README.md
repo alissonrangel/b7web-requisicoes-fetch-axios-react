@@ -1,4 +1,4 @@
-# anotacoes
+# Anotações da aula de requisições do curos de React do b7web
 
 ### Observações:
 - não colocar fetch() diretamente no useEffect
